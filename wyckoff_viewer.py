@@ -3,12 +3,14 @@ import pandas as pd
 import streamlit as st
 
 # =========================
-# CONFIG
+# CONFIG (✅ WORKS LOCAL + WEB)
 # =========================
-st.set_page_config(page_title="Sovereign Analytics", layout="wide")
-
-FILE_PATH = r"C:\Users\leeke\OneDrive\Scanner\wyckoff-dashboard\data\wyckoff_ranked_latest.csv"
-LOGO_PATH = r"C:\Users\leeke\OneDrive\Scanner\wyckoff-dashboard\logo.png"
+if os.path.exists("data/wyckoff_ranked_latest.csv"):
+    FILE_PATH = "data/wyckoff_ranked_latest.csv"
+    LOGO_PATH = "logo.png"
+else:
+    FILE_PATH = r"C:\Users\leeke\OneDrive\Scanner\wyckoff-dashboard\data\wyckoff_ranked_latest.csv"
+    LOGO_PATH = r"C:\Users\leeke\OneDrive\Scanner\wyckoff-dashboard\logo.png"
 
 # =========================
 # HELPERS
@@ -28,7 +30,12 @@ def section_header(title):
     )
 
 # =========================
-# STYLING (UNCHANGED)
+# PAGE SETTINGS
+# =========================
+st.set_page_config(page_title="Sovereign Analytics", layout="wide")
+
+# =========================
+# GLOBAL STYLING (UNCHANGED)
 # =========================
 st.markdown("""
 <style>
@@ -54,7 +61,7 @@ st.markdown("""
     color: black;
 }
 
-/* Tighten layout */
+/* Layout */
 .block-container {
     padding-top: 1rem;
 }
@@ -69,7 +76,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================
-# HEADER + REFRESH BUTTON ✅
+# HEADER + REFRESH ✅
 # =========================
 if os.path.exists(LOGO_PATH):
     st.image(LOGO_PATH, width=320)
@@ -88,7 +95,7 @@ except Exception as e:
     st.write(e)
     st.stop()
 
-# Normalize string columns
+# Normalize columns
 for col in ["symbol", "market_phase", "phase_confidence", "structure_quality"]:
     if col in df.columns:
         df[col] = df[col].astype(str).str.strip()
@@ -173,7 +180,6 @@ section_header("Select Symbol")
 
 symbols = scanner_df["Symbol"].tolist()
 selected_symbol = st.selectbox("", symbols)
-
 row = filtered_df[filtered_df["symbol"] == selected_symbol].iloc[0]
 
 section_header(f"{selected_symbol} Summary")
