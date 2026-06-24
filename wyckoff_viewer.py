@@ -3,10 +3,12 @@ import pandas as pd
 import streamlit as st
 
 # =========================
-# CONFIG (✅ FIXED FOR CLOUD)
+# CONFIG
 # =========================
-FILE_PATH = "data/wyckoff_ranked_latest.csv"
-LOGO_PATH = "logo.png"
+st.set_page_config(page_title="Sovereign Analytics", layout="wide")
+
+FILE_PATH = r"C:\Users\leeke\OneDrive\Scanner\wyckoff-dashboard\data\wyckoff_ranked_latest.csv"
+LOGO_PATH = r"C:\Users\leeke\OneDrive\Scanner\wyckoff-dashboard\logo.png"
 
 # =========================
 # HELPERS
@@ -26,12 +28,7 @@ def section_header(title):
     )
 
 # =========================
-# PAGE SETTINGS
-# =========================
-st.set_page_config(page_title="Sovereign Analytics", layout="wide")
-
-# =========================
-# GLOBAL STYLING
+# STYLING (UNCHANGED)
 # =========================
 st.markdown("""
 <style>
@@ -63,16 +60,23 @@ st.markdown("""
 }
 
 /* Table font */
-[data-testid="stDataFrame"] * {
-    font-size: 13px !important;
-}
-
+[data-testid="stDataFrame"] *,
 [data-testid="stDataEditor"] * {
     font-size: 13px !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
+# =========================
+# HEADER + REFRESH BUTTON ✅
+# =========================
+if os.path.exists(LOGO_PATH):
+    st.image(LOGO_PATH, width=320)
+
+if st.button("🔄 Refresh Data"):
+    st.cache_data.clear()
+    st.rerun()
 
 # =========================
 # LOAD DATA
@@ -90,12 +94,6 @@ for col in ["symbol", "market_phase", "phase_confidence", "structure_quality"]:
         df[col] = df[col].astype(str).str.strip()
 
 # =========================
-# HEADER
-# =========================
-if os.path.exists(LOGO_PATH):
-    st.image(LOGO_PATH, width=320)
-
-# =========================
 # SCANNER
 # =========================
 section_header("Scanner")
@@ -104,7 +102,6 @@ scanner_container, _ = st.columns([7, 3])
 
 with scanner_container:
 
-    # FILTER ROW
     f1, f2, f3, f4, f5 = st.columns([1, 1, 1, 1, 1])
 
     with f1:
@@ -125,7 +122,6 @@ with scanner_container:
     with f5:
         min_score = st.number_input("Min Score", min_value=0, value=0, step=1)
 
-    # APPLY FILTERS
     filtered_df = df.copy()
 
     if symbol_filter:
@@ -144,7 +140,6 @@ with scanner_container:
 
     filtered_df = filtered_df[filtered_df["research_score"] >= min_score]
 
-    # BUILD TABLE
     scanner_df = filtered_df[[
         "symbol",
         "market_phase",
@@ -163,7 +158,6 @@ with scanner_container:
         st.warning("No results match the selected filters.")
         st.stop()
 
-    # TABLE
     st.data_editor(
         scanner_df,
         use_container_width=True,
@@ -173,7 +167,7 @@ with scanner_container:
     )
 
 # =========================
-# SELECT SYMBOL
+# DETAIL
 # =========================
 section_header("Select Symbol")
 
@@ -182,9 +176,6 @@ selected_symbol = st.selectbox("", symbols)
 
 row = filtered_df[filtered_df["symbol"] == selected_symbol].iloc[0]
 
-# =========================
-# SUMMARY
-# =========================
 section_header(f"{selected_symbol} Summary")
 
 st.markdown(f"""
@@ -204,9 +195,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
-# SIGNALS
-# =========================
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -227,9 +215,6 @@ with col3:
         if item.strip():
             st.write(item.strip())
 
-# =========================
-# FULL ANALYSIS
-# =========================
 with st.expander("Full Analysis"):
 
     section_header("Trend Structure")
