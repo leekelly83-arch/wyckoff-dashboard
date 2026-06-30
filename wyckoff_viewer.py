@@ -91,7 +91,7 @@ if st.button("🔄 Refresh Data"):
 try:
     df = load_data()
 
-    # ✅ DEBUG LINE (IMPORTANT)
+    # ✅ DEBUG LINE (temporary)
     st.write("Columns in dataset:", df.columns)
 
 except Exception as e:
@@ -99,9 +99,10 @@ except Exception as e:
     st.write(e)
     st.stop()
 
-# Normalize columns
+# ✅ Clean column names (IMPORTANT)
 df.columns = df.columns.str.strip()
 
+# Normalize string fields
 for col in ["symbol", "market_phase", "phase_confidence", "structure_quality"]:
     if col in df.columns:
         df[col] = df[col].astype(str).str.strip()
@@ -115,7 +116,7 @@ scanner_container, _ = st.columns([7, 3])
 
 with scanner_container:
 
-    f1, f2, f3, f4, f5 = st.columns([1, 1, 1, 1, 1])
+    f1, f2, f3, f4, f5 = st.columns(5)
 
     with f1:
         symbol_filter = st.text_input("Symbol", "")
@@ -151,7 +152,7 @@ with scanner_container:
     if structure_filter != "All":
         filtered_df = filtered_df[filtered_df["structure_quality"] == structure_filter]
 
-    # ✅ This is where your error happens if column missing
+    # ✅ CRITICAL LINE (must exist)
     filtered_df = filtered_df[filtered_df["research_score"] >= min_score]
 
     scanner_df = filtered_df[[
@@ -181,7 +182,7 @@ with scanner_container:
     )
 
 # =========================
-# DETAIL
+# DETAIL VIEW
 # =========================
 section_header("Select Symbol")
 
@@ -196,3 +197,58 @@ st.markdown(f"""
 <div style="
     display:flex;
     gap:40px;
+    font-size:15px;
+    padding:16px;
+    background-color:#FDC9A3;
+    border-radius:8px;
+    color:black;
+">
+    <div><b>Market Phase</b><br>{row['market_phase']}</div>
+    <div><b>Confidence</b><br>{row['phase_confidence']}</div>
+    <div><b>Structure</b><br>{row['structure_quality']}</div>
+    <div><b>Score</b><br>{row['research_score']}</div>
+</div>
+""", unsafe_allow_html=True)
+
+# =========================
+# SIGNAL BLOCKS
+# =========================
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    section_header("Structural Events")
+    for item in str(row["structural_events"]).split("|"):
+        if item.strip():
+            st.write(item.strip())
+
+with col2:
+    section_header("Key Observations")
+    for item in str(row["key_observations"]).split("|"):
+        if item.strip():
+            st.write(item.strip())
+
+with col3:
+    section_header("Caution Flags")
+    for item in str(row["caution_flags"]).split("|"):
+        if item.strip():
+            st.write(item.strip())
+
+# =========================
+# FULL ANALYSIS
+# =========================
+with st.expander("Full Analysis"):
+
+    section_header("Trend Structure")
+    st.write(row["trend_structure"])
+
+    section_header("Effort vs Result")
+    st.write(row["effort_vs_result"])
+
+    section_header("Volume Behavior")
+    st.write(row["volume_behavior"])
+
+    section_header("Accumulation / Distribution")
+    st.write(row["accumulation_distribution"])
+
+    section_header("Composite Operator")
+    st.write(row["composite_operator"])
