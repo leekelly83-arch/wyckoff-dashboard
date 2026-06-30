@@ -90,16 +90,12 @@ if st.button("🔄 Refresh Data"):
 # =========================
 try:
     df = load_data()
-
-    # ✅ DEBUG LINE (temporary)
-    st.write("Columns in dataset:", df.columns)
-
 except Exception as e:
     st.error("Error loading data ❌")
     st.write(e)
     st.stop()
 
-# ✅ Clean column names (IMPORTANT)
+# ✅ Clean column names
 df.columns = df.columns.str.strip()
 
 # Normalize string fields
@@ -152,7 +148,6 @@ with scanner_container:
     if structure_filter != "All":
         filtered_df = filtered_df[filtered_df["structure_quality"] == structure_filter]
 
-    # ✅ CRITICAL LINE (must exist)
     filtered_df = filtered_df[filtered_df["research_score"] >= min_score]
 
     scanner_df = filtered_df[[
