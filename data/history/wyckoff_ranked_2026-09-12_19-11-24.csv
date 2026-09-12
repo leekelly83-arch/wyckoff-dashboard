@@ -1,0 +1,16 @@
+symbol,market_phase,phase_confidence,phase_confidence_score,structure_quality
+SHAK,Transitional,Low,30,Noisy
+CBZ,Transitional,Low,30,Noisy
+UNIT,Transitional,Low,30,Noisy
+CALX,Transitional,Low,30,Noisy
+PENN,Transitional,Low,30,Noisy
+ARR,Transitional,Low,30,Noisy
+SHO,Transitional,Low,30,Noisy
+HAPN,Transitional,Low,30,Noisy
+DEI,Transitional,Low,30,Noisy
+PAX,Transitional,Low,30,Noisy
+BLFS,Transitional,Low,30,Noisy
+RLJ,Transitional,Low,30,Noisy
+EFC,Transitional,Low,30,Noisy
+MQ,Transitional,Low,30,Noisy
+ECVT,Transitional,Low,30,Noisy
